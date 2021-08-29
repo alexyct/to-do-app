@@ -11,16 +11,18 @@ function App() {
 
   // This function only runs once when app starts
   useEffect(() => {
-    getLocalTodos();
+    // get todo from local storage
+    if(localStorage.getItem("todos") === null) {
+      localStorage.setItem("todos", JSON.stringify([])); // we need this step or else Todos will be null and that doesn't work
+    } else {
+      let todoLocal = JSON.parse(localStorage.getItem("todos"));
+      setTodos(todoLocal);
+    }
   }, []);
 
   // The function inside useEffect runs everytime todos or status changes
   useEffect(() => {
-    filterHandler();
-    saveLocalTodos();
-  }, [todos, status]);
-
-  const filterHandler = () => {
+    // filterHandler
     switch(status) {
       case 'completed':
         setFilteredTodos(todos.filter(todo => todo.completed === true));
@@ -31,22 +33,10 @@ function App() {
       default:
         setFilteredTodos(todos);
         break;
-    }
-  }
-
-  // // save to local
-  const saveLocalTodos = () => {
+    };
+    // // save to local
     localStorage.setItem("todos", JSON.stringify(todos));
-  }
-  // get todo from local storage
-  const getLocalTodos = () => {
-    if(localStorage.getItem("todos") === null) {
-      localStorage.setItem("todos", JSON.stringify([])); // we need this step or else Todos will be null and that doesn't work
-    } else {
-      let todoLocal = JSON.parse(localStorage.getItem("todos"));
-      setTodos(todoLocal);
-    }
-  }
+  }, [todos, status]);
 
   return (
     <div className="App">
